@@ -1,7 +1,7 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
-    `maven-publish`
+    alias(libs.plugins.vanniktech.maven.publish)
 }
 
 android {
@@ -22,31 +22,48 @@ android {
     }
 }
 
-group = "com.endi"
+group = "io.github.endid7"
 version = "1.0.0"
 
-afterEvaluate {
-    publishing {
-        publications {
-            create<MavenPublication>("release") {
-                from(components["release"])
+mavenPublishing {
+    publishToMavenCentral(automaticRelease = true)
+    signAllPublications()
 
-                groupId = "com.endi"
-                artifactId = "soundpack"
-                version = "1.0.0"
+    coordinates(
+        groupId = "io.github.endid7",
+        artifactId = "soundpack",
+        version = "1.0.0"
+    )
+
+    pom {
+        name.set("SoundPack")
+        description.set("Indonesian payment notification sound library for Android")
+        url.set("https://github.com/endid7/NotificationSoundPack")
+
+        licenses {
+            license {
+                name.set("Apache License 2.0")
+                url.set("https://www.apache.org/licenses/LICENSE-2.0")
             }
         }
 
-        repositories {
-            maven {
-                name = "GitHubPackages"
-                url = uri("https://maven.pkg.github.com/endid7/NotificationSoundPack")
-
-                credentials {
-                    username = System.getenv("GITHUB_ACTOR")
-                    password = System.getenv("GITHUB_TOKEN")
-                }
+        developers {
+            developer {
+                id.set("endid7")
+                name.set("Endi")
             }
+        }
+
+        scm {
+            connection.set(
+                "scm:git:git://github.com/endid7/NotificationSoundPack.git"
+            )
+            developerConnection.set(
+                "scm:git:ssh://github.com/endid7/NotificationSoundPack.git"
+            )
+            url.set(
+                "https://github.com/endid7/NotificationSoundPack"
+            )
         }
     }
 }
