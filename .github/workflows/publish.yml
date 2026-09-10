@@ -26,6 +26,32 @@ jobs:
       - name: Make Gradle executable
         run: chmod +x ./gradlew
 
+      - name: Validate signing key
+        shell: bash
+        env:
+          SIGNING_KEY: ${{ secrets.SIGNING_KEY }}
+        run: |
+          set -e
+
+          printf '%s' "$SIGNING_KEY" > /tmp/signing-key.asc
+
+          echo "Key file size:"
+          wc -c /tmp/signing-key.asc
+
+          echo "First line:"
+          head -n 1 /tmp/signing-key.asc
+
+          echo "Last line:"
+          tail -n 1 /tmp/signing-key.asc
+
+          echo "Validating PGP structure..."
+
+          gpg --batch --show-keys /tmp/signing-key.asc
+
+          echo "PGP key validation: OK"
+
+          rm -f /tmp/signing-key.asc
+
       - name: Publish to Maven Central
         run: ./gradlew :soundpack:publishToMavenCentral
         env:
