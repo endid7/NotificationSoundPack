@@ -23,12 +23,12 @@ android {
     }
 }
 
+group = "io.github.endid7"
+version = "1.0.0"
+
 signing {
     useGpgCmd()
 }
-
-group = "io.github.endid7"
-version = "1.0.0"
 
 mavenPublishing {
     publishToMavenCentral(automaticRelease = true)
@@ -40,5 +40,34 @@ mavenPublishing {
         version = "1.0.0"
     )
 
-    // bagian POM kamu tetap seperti sekarang
+    pom {
+        name.set("SoundPack")
+        description.set("Indonesian payment notification sound library for Android")
+        url.set("https://github.com/endid7/NotificationSoundPack")
+
+        licenses {
+            license {
+                name.set("Apache License 2.0")
+                url.set("https://www.apache.org/licenses/LICENSE-2.0.txt")
+            }
+        }
+
+        developers {
+            developer {
+                id.set("endid7")
+                name.set("Endi")
+                url.set("https://github.com/endid7")
+            }
+        }
+
+        scm {
+            url.set("https://github.com/endid7/NotificationSoundPack")
+            connection.set(
+                "scm:git:git://github.com/endid7/NotificationSoundPack.git"
+            )
+            developerConnection.set(
+                "scm:git:ssh://git@github.com/endid7/NotificationSoundPack.git"
+            )
+        }
+    }
 }
