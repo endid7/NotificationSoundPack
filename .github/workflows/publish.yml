@@ -53,12 +53,33 @@ jobs:
 
           echo "Checking for secret key..."
 
-          gpg --batch \
+          if ! gpg --batch \
             --list-packets \
             /tmp/signing-key.gpg \
-            | grep -m 1 -E "secret key|secret sub key"
+            | grep -m 1 -E "secret key|secret sub key"; then
+
+            echo "ERROR: Secret key packet not found."
+            exit 1
+          fi
 
           echo "Signing key preparation: OK"
+
+      - name: Validate signing key ID
+        shell: bash
+        env:
+          SIGNING_KEY_ID: ${{ secrets.SIGNING_KEY_ID }}
+        run: |
+          set -e
+
+          echo "Key ID length: ${#SIGNING_KEY_ID}"
+
+          if [[ "$SIGNING_KEY_ID" =~ ^[0-9A-Fa-f]{8}$ ]]; then
+            echo "Key ID format: VALID"
+          else
+            echo "Key ID format: INVALID"
+            echo "Expected exactly 8 hexadecimal characters."
+            exit 1
+          fi
 
       - name: Publish to Maven Central
         shell: bash
@@ -69,6 +90,8 @@ jobs:
           SIGNING_PASSWORD: ${{ secrets.SIGNING_PASSWORD }}
         run: |
           set -e
+
+          echo "Starting Maven Central publication..."
 
           ./gradlew :soundpack:publishToMavenCentral \
             -PmavenCentralUsername="$CENTRAL_USERNAME" \
