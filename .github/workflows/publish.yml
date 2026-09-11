@@ -53,11 +53,27 @@ jobs:
           echo "Signing key validation: OK"
 
       - name: Publish to Maven Central
-        run: ./gradlew :soundpack:publishToMavenCentral
+        shell: bash
         env:
-          ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ secrets.CENTRAL_USERNAME }}
-          ORG_GRADLE_PROJECT_mavenCentralPassword: ${{ secrets.CENTRAL_TOKEN }}
+          CENTRAL_USERNAME: ${{ secrets.CENTRAL_USERNAME }}
+          CENTRAL_TOKEN: ${{ secrets.CENTRAL_TOKEN }}
+          SIGNING_KEY_BASE64: ${{ secrets.SIGNING_KEY_BASE64 }}
+          SIGNING_KEY_ID: ${{ secrets.SIGNING_KEY_ID }}
+          SIGNING_PASSWORD: ${{ secrets.SIGNING_PASSWORD }}
+        run: |
+          set -e
 
-          ORG_GRADLE_PROJECT_signingInMemoryKey: ${{ secrets.SIGNING_KEY_BASE64 }}
-          ORG_GRADLE_PROJECT_signingInMemoryKeyId: ${{ secrets.SIGNING_KEY_ID }}
-          ORG_GRADLE_PROJECT_signingInMemoryKeyPassword: ${{ secrets.SIGNING_PASSWORD }}
+          echo "Preparing PGP signing key..."
+
+          SIGNING_KEY="$(printf '%s' "$SIGNING_KEY_BASE64" | base64 --decode)"
+
+          export ORG_GRADLE_PROJECT_mavenCentralUsername="$CENTRAL_USERNAME"
+          export ORG_GRADLE_PROJECT_mavenCentralPassword="$CENTRAL_TOKEN"
+
+          export ORG_GRADLE_PROJECT_signingInMemoryKey="$SIGNING_KEY"
+          export ORG_GRADLE_PROJECT_signingInMemoryKeyId="$SIGNING_KEY_ID"
+          export ORG_GRADLE_PROJECT_signingInMemoryKeyPassword="$SIGNING_PASSWORD"
+
+          echo "Starting Maven Central publication..."
+
+          ./gradlew :soundpack:publishToMavenCentral
