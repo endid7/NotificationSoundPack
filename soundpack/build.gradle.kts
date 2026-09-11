@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.vanniktech.maven.publish)
+    id("signing")
 }
 
 android {
@@ -22,6 +23,10 @@ android {
     }
 }
 
+signing {
+    useGpgCmd()
+}
+
 group = "io.github.endid7"
 version = "1.0.0"
 
@@ -35,35 +40,5 @@ mavenPublishing {
         version = "1.0.0"
     )
 
-    pom {
-        name.set("SoundPack")
-        description.set("Indonesian payment notification sound library for Android")
-        url.set("https://github.com/endid7/NotificationSoundPack")
-
-        licenses {
-            license {
-                name.set("Apache License 2.0")
-                url.set("https://www.apache.org/licenses/LICENSE-2.0")
-            }
-        }
-
-        developers {
-            developer {
-                id.set("endid7")
-                name.set("Endi")
-            }
-        }
-
-        scm {
-            connection.set(
-                "scm:git:git://github.com/endid7/NotificationSoundPack.git"
-            )
-            developerConnection.set(
-                "scm:git:ssh://github.com/endid7/NotificationSoundPack.git"
-            )
-            url.set(
-                "https://github.com/endid7/NotificationSoundPack"
-            )
-        }
-    }
+    // bagian POM kamu tetap seperti sekarang
 }
