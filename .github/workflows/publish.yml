@@ -63,7 +63,82 @@ jobs:
         run: |
           set -e
 
-          echo "Preparing PGP signing key..."
+          echo "Preparing PGP signing key..."name: Publish SoundPack to Maven Central
+
+on:
+  workflow_dispatch:
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Make Gradle executable
+        run: chmod +x ./gradlew
+
+      - name: Prepare GPG signing key
+        shell: bash
+        env:
+          SIGNING_KEY_BASE64: ${{ secrets.SIGNING_KEY_BASE64 }}
+        run: |
+          set -e
+
+          echo "Decoding signing key..."
+
+          printf '%s' "$SIGNING_KEY_BASE64" \
+            | base64 --decode \
+            > /tmp/signing-key.asc
+
+          echo "Converting ASCII-armored key to GPG keyring..."
+
+          gpg --batch \
+            --dearmor \
+            --output /tmp/signing-key.gpg \
+            /tmp/signing-key.asc
+
+          echo "Keyring created:"
+          ls -lh /tmp/signing-key.gpg
+
+          echo "Checking secret key packets..."
+
+          gpg --batch \
+            --list-packets \
+            /tmp/signing-key.gpg \
+            | grep -m 1 -E "secret key|secret sub key"
+
+          echo "GPG signing key preparation: OK"
+
+      - name: Publish to Maven Central
+        shell: bash
+        env:
+          ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ secrets.CENTRAL_USERNAME }}
+          ORG_GRADLE_PROJECT_mavenCentralPassword: ${{ secrets.CENTRAL_TOKEN }}
+
+          ORG_GRADLE_PROJECT_signing_keyId: ${{ secrets.SIGNING_KEY_ID }}
+          ORG_GRADLE_PROJECT_signing_password: ${{ secrets.SIGNING_PASSWORD }}
+          ORG_GRADLE_PROJECT_signing_secretKeyRingFile: /tmp/signing-key.gpg
+
+        run: |
+          set -e
+
+          echo "Starting Maven Central publication..."
+
+          ./gradlew :soundpack:publishToMavenCentral
 
           SIGNING_KEY="$(printf '%s' "$SIGNING_KEY_BASE64" | base64 --decode)"
 
