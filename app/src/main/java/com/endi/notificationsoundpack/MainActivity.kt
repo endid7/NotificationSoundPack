@@ -14,12 +14,12 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        SoundPackPlayer.playAmount(
+        SoundPackPlayer.playPaymentReceived(
             context = this,
-            amount = 12_500,
             onComplete = {
-                SoundPackPlayer.playPaymentReceivedMyIndopay(
-                    this
+                SoundPackPlayer.playAmount(
+                    this,
+                    amount = 12500
                 )
             }
         )
