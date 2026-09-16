@@ -24,7 +24,7 @@ android {
 }
 
 group = "io.github.endid7"
-version = "1.1.5"
+version = "1.1.6"
 
 signing {
     useGpgCmd()
@@ -37,7 +37,7 @@ mavenPublishing {
     coordinates(
         groupId = "io.github.endid7",
         artifactId = "soundpack",
-        version = "1.1.5"
+        version = "1.1.6"
     )
 
     pom {
