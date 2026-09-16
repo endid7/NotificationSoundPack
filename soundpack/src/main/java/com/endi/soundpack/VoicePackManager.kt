@@ -32,7 +32,7 @@ object VoicePackManager {
      * Ambil nilai lengkap dari GitHub Release.
      */
     private const val MALE_PACK_SHA256 =
-        "8043fa277bc5eeda66a04c68265b5d6918899603eb1104eadd60ee23cd94bfea"
+        "246af14d7d4a51fdd0eb1bf5fa258f3db5778fb81d2134847dc77066789b5103"
 
     private val maleRequiredFiles = listOf(
         "nol.mp3",

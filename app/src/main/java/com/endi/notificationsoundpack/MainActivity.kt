@@ -50,7 +50,12 @@ class MainActivity : ComponentActivity() {
 
                 SoundPackPlayer.playAmount(
                     context = this@MainActivity,
-                    amount = 672500
+                    amount = 672500,
+                    onComplete = {
+                        SoundPackPlayer.playPaymentReceivedMyIndopay(
+                            context = this@MainActivity
+                        )
+                    }
                 )
 
                 Log.d(TAG, "5. playAmount called")
