@@ -65,6 +65,7 @@ internal object VoiceAudioResolver {
             "payment_received" -> R.raw.payment_received
             "payment_received_indopay" -> R.raw.payment_received_indopay
             "payment_received_myindopay" -> R.raw.payment_received_myindopay
+            "custom_notification_sound" -> R.raw.custom_notification_sound
 
             else -> throw IllegalArgumentException(
                 "Unknown sound resource: $resourceName"

@@ -83,6 +83,34 @@ object SoundPackPlayer {
         playNext(context.applicationContext)
     }
 
+    fun playNotif(
+        context: Context,
+        onComplete: (() -> Unit)? = null
+    ) {
+        stop()
+
+        val resourceName = "custom_notification_sound"
+
+        val source = VoiceAudioResolver.resolve(
+            context = context.applicationContext,
+            voice = currentVoice,
+            resourceName = resourceName
+        )
+
+        if (source == null) {
+            throw IllegalStateException(
+                "Payment received audio is not available " +
+                        "for voice: $currentVoice"
+            )
+        }
+
+        audioSources = listOf(source)
+        currentIndex = 0
+        this.onComplete = onComplete
+
+        playNext(context.applicationContext)
+    }
+
     fun playPaymentReceived(
         context: Context,
         onComplete: (() -> Unit)? = null
@@ -117,7 +145,7 @@ object SoundPackPlayer {
     ) {
         stop()
 
-        val resourceName = "payment_received_myindopay"
+        val resourceName = "payment_received_indopay"
 
         val source = VoiceAudioResolver.resolve(
             context = context.applicationContext,

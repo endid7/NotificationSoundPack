@@ -59,7 +59,8 @@ object VoicePackManager {
         "rupiah.mp3",
         "payment_received.mp3",
         "payment_received_indopay.mp3",
-        "payment_received_myindopay.mp3"
+        "payment_received_myindopay.mp3",
+        "custom_notification_sound.mp3"
     )
 
     fun getVoiceDirectory(
