@@ -62,6 +62,9 @@ internal object VoiceAudioResolver {
             "miliar" -> R.raw.miliar
             "triliun" -> R.raw.triliun
             "rupiah" -> R.raw.rupiah
+            "payment_received" -> R.raw.payment_received
+            "payment_received_indopay" -> R.raw.payment_received_indopay
+            "payment_received_myindopay" -> R.raw.payment_received_myindopay
 
             else -> throw IllegalArgumentException(
                 "Unknown sound resource: $resourceName"

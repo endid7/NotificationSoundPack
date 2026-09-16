@@ -56,7 +56,10 @@ object VoicePackManager {
         "juta.mp3",
         "miliar.mp3",
         "triliun.mp3",
-        "rupiah.mp3"
+        "rupiah.mp3",
+        "payment_received.mp3",
+        "payment_received_indopay.mp3",
+        "payment_received_myindopay.mp3"
     )
 
     fun getVoiceDirectory(
