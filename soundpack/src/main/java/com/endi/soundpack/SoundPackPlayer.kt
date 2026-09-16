@@ -2,6 +2,7 @@ package com.endi.soundpack
 
 import android.content.Context
 import android.media.MediaPlayer
+import com.endi.soundpack.model.Voice
 
 /**
  * @author Endi
@@ -13,10 +14,36 @@ object SoundPackPlayer {
 
     private var mediaPlayer: MediaPlayer? = null
 
-    private var resources: List<Int> = emptyList()
+    private var audioSources: List<AudioSource> = emptyList()
     private var currentIndex = 0
 
+    private var currentVoice = Voice.FEMALE
+
     private var onComplete: (() -> Unit)? = null
+
+    /**
+     * Set voice yang akan digunakan untuk playback.
+     */
+    fun setVoice(voice: Voice) {
+        currentVoice = voice
+    }
+
+    /**
+     * Voice yang sedang digunakan.
+     */
+    fun getVoice(): Voice {
+        return currentVoice
+    }
+
+    fun isVoiceAvailable(
+        context: Context,
+        voice: Voice
+    ): Boolean {
+        return VoicePackManager.isVoicePackAvailable(
+            context = context,
+            voice = voice
+        )
+    }
 
     fun playAmount(
         context: Context,
@@ -25,7 +52,31 @@ object SoundPackPlayer {
     ) {
         stop()
 
-        resources = IndonesianNumber.toAudioResources(amount)
+        val resourceNames = IndonesianNumber.toAudioNames(amount)
+
+        audioSources = resourceNames.mapNotNull { resourceName ->
+            VoiceAudioResolver.resolve(
+                context = context.applicationContext,
+                voice = currentVoice,
+                resourceName = resourceName
+            )
+        }
+
+        if (audioSources.isEmpty()) {
+            throw IllegalStateException(
+                "No audio available for voice: $currentVoice"
+            )
+        }
+
+        if (currentVoice == Voice.MALE &&
+            audioSources.size != resourceNames.size
+        ) {
+            throw IllegalStateException(
+                "Male voice pack is incomplete. " +
+                        "Please download the male voice pack first."
+            )
+        }
+
         currentIndex = 0
         this.onComplete = onComplete
 
@@ -38,7 +89,22 @@ object SoundPackPlayer {
     ) {
         stop()
 
-        resources = listOf(R.raw.payment_received)
+        val resourceName = "payment_received"
+
+        val source = VoiceAudioResolver.resolve(
+            context = context.applicationContext,
+            voice = currentVoice,
+            resourceName = resourceName
+        )
+
+        if (source == null) {
+            throw IllegalStateException(
+                "Payment received audio is not available " +
+                        "for voice: $currentVoice"
+            )
+        }
+
+        audioSources = listOf(source)
         currentIndex = 0
         this.onComplete = onComplete
 
@@ -51,7 +117,22 @@ object SoundPackPlayer {
     ) {
         stop()
 
-        resources = listOf(R.raw.payment_received_indopay)
+        val resourceName = "payment_received_myindopay"
+
+        val source = VoiceAudioResolver.resolve(
+            context = context.applicationContext,
+            voice = currentVoice,
+            resourceName = resourceName
+        )
+
+        if (source == null) {
+            throw IllegalStateException(
+                "Payment received MyIndopay audio is not available " +
+                        "for voice: $currentVoice"
+            )
+        }
+
+        audioSources = listOf(source)
         currentIndex = 0
         this.onComplete = onComplete
 
@@ -59,17 +140,28 @@ object SoundPackPlayer {
     }
 
     private fun playNext(context: Context) {
-        if (currentIndex >= resources.size) {
+        if (currentIndex >= audioSources.size) {
             finish()
             return
         }
 
-        val resourceId = resources[currentIndex]
+        val source = audioSources[currentIndex]
 
-        val player = MediaPlayer.create(
-            context,
-            resourceId
-        )
+        val player = when (source) {
+            is AudioSource.Resource -> {
+                MediaPlayer.create(
+                    context,
+                    source.resourceId
+                )
+            }
+
+            is AudioSource.File -> {
+                MediaPlayer().apply {
+                    setDataSource(source.file.absolutePath)
+                    prepare()
+                }
+            }
+        }
 
         if (player == null) {
             currentIndex++
@@ -122,7 +214,7 @@ object SoundPackPlayer {
 
         mediaPlayer = null
 
-        resources = emptyList()
+        audioSources = emptyList()
         currentIndex = 0
         onComplete = null
     }
@@ -132,7 +224,7 @@ object SoundPackPlayer {
     }
 
     private fun finish() {
-        resources = emptyList()
+        audioSources = emptyList()
         currentIndex = 0
 
         val callback = onComplete

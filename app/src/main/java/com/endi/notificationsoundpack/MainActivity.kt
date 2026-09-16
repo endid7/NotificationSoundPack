@@ -2,7 +2,11 @@ package com.endi.notificationsoundpack
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import androidx.lifecycle.lifecycleScope
 import com.endi.soundpack.SoundPackPlayer
+import com.endi.soundpack.VoicePackManager
+import com.endi.soundpack.model.Voice
+import kotlinx.coroutines.launch
 
 /**
  * @author Endi
@@ -14,15 +18,25 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        SoundPackPlayer.playPaymentReceived(
-            context = this,
-            onComplete = {
+
+        lifecycleScope.launch {
+            try {
+                // Download dan install voice Male
+                VoicePackManager.downloadMalePack(this@MainActivity)
+
+                // Pakai voice Male
+                SoundPackPlayer.setVoice(Voice.MALE)
+
+                // Test suara nominal
                 SoundPackPlayer.playAmount(
-                    this,
-                    amount = 12500
+                    context = this@MainActivity,
+                    amount = 12_500
                 )
+
+            } catch (e: Exception) {
+                e.printStackTrace()
             }
-        )
+        }
     }
 
     override fun onDestroy() {

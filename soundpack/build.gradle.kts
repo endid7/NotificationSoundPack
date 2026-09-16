@@ -24,7 +24,7 @@ android {
 }
 
 group = "io.github.endid7"
-version = "1.0.0"
+version = "1.1.0"
 
 signing {
     useGpgCmd()
@@ -37,7 +37,7 @@ mavenPublishing {
     coordinates(
         groupId = "io.github.endid7",
         artifactId = "soundpack",
-        version = "1.0.0"
+        version = "1.1.0"
     )
 
     pom {
@@ -69,5 +69,10 @@ mavenPublishing {
                 "scm:git:ssh://git@github.com/endid7/NotificationSoundPack.git"
             )
         }
+    }
+
+    dependencies {
+        testImplementation("junit:junit:4.13.2")
+        implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.1")
     }
 }

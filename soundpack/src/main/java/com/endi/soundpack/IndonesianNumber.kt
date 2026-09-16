@@ -185,4 +185,182 @@ object IndonesianNumber {
             )
         }
     }
+
+    fun toAudioNames(amount: Long): List<String> {
+        require(amount >= 0) {
+            "Amount must not be negative"
+        }
+
+        if (amount == 0L) {
+            return listOf(
+                "nol",
+                "rupiah"
+            )
+        }
+
+        return convertToNames(amount) + "rupiah"
+    }
+
+    private fun convertToNames(number: Long): List<String> {
+        return when {
+            number < 10 -> {
+                listOf(digitName(number))
+            }
+
+            number == 10L -> {
+                listOf("sepuluh")
+            }
+
+            number == 11L -> {
+                listOf("sebelas")
+            }
+
+            number < 20 -> {
+                listOf(
+                    digitName(number % 10),
+                    "belas"
+                )
+            }
+
+            number < 100 -> {
+                val tens = number / 10
+                val ones = number % 10
+
+                buildList {
+                    add(digitName(tens))
+                    add("puluh")
+
+                    if (ones > 0) {
+                        add(digitName(ones))
+                    }
+                }
+            }
+
+            number == 100L -> {
+                listOf("seratus")
+            }
+
+            number < 200 -> {
+                buildList {
+                    add("seratus")
+
+                    val remainder = number - 100
+
+                    if (remainder > 0) {
+                        addAll(convertToNames(remainder))
+                    }
+                }
+            }
+
+            number < 1000 -> {
+                val hundreds = number / 100
+                val remainder = number % 100
+
+                buildList {
+                    add(digitName(hundreds))
+                    add("ratus")
+
+                    if (remainder > 0) {
+                        addAll(convertToNames(remainder))
+                    }
+                }
+            }
+
+            number == 1000L -> {
+                listOf("seribu")
+            }
+
+            number < 2000 -> {
+                buildList {
+                    add("seribu")
+
+                    val remainder = number - 1000
+
+                    if (remainder > 0) {
+                        addAll(convertToNames(remainder))
+                    }
+                }
+            }
+
+            number < 1_000_000 -> {
+                val thousands = number / 1000
+                val remainder = number % 1000
+
+                buildList {
+                    addAll(convertToNames(thousands))
+                    add("ribu")
+
+                    if (remainder > 0) {
+                        addAll(convertToNames(remainder))
+                    }
+                }
+            }
+
+            number < 1_000_000_000 -> {
+                val millions = number / 1_000_000
+                val remainder = number % 1_000_000
+
+                buildList {
+                    addAll(convertToNames(millions))
+                    add("juta")
+
+                    if (remainder > 0) {
+                        addAll(convertToNames(remainder))
+                    }
+                }
+            }
+
+            number < 1_000_000_000_000L -> {
+                val billions = number / 1_000_000_000
+                val remainder = number % 1_000_000_000
+
+                buildList {
+                    addAll(convertToNames(billions))
+                    add("miliar")
+
+                    if (remainder > 0) {
+                        addAll(convertToNames(remainder))
+                    }
+                }
+            }
+
+            number < 1_000_000_000_000_000L -> {
+                val trillions = number / 1_000_000_000_000L
+                val remainder = number % 1_000_000_000_000L
+
+                buildList {
+                    addAll(convertToNames(trillions))
+                    add("triliun")
+
+                    if (remainder > 0) {
+                        addAll(convertToNames(remainder))
+                    }
+                }
+            }
+
+            else -> {
+                throw IllegalArgumentException(
+                    "Amount is too large: $number"
+                )
+            }
+        }
+    }
+
+    private fun digitName(digit: Long): String {
+        return when (digit) {
+            0L -> "nol"
+            1L -> "satu"
+            2L -> "dua"
+            3L -> "tiga"
+            4L -> "empat"
+            5L -> "lima"
+            6L -> "enam"
+            7L -> "tujuh"
+            8L -> "delapan"
+            9L -> "sembilan"
+            else -> throw IllegalArgumentException(
+                "Invalid digit: $digit"
+            )
+        }
+    }
 }
