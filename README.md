@@ -32,7 +32,7 @@ Add the dependency to your Android project:
 
 ```kotlin
 dependencies {
-    implementation("io.github.endid7:soundpack:1.1.2")
+    implementation("io.github.endid7:soundpack:1.1.6")
 }
 ```
 
@@ -329,7 +329,7 @@ SoundPack
 Latest published version:
 
 ```text
-io.github.endid7:soundpack:1.1.2
+io.github.endid7:soundpack:1.1.6
 ```
 
 [Maven Central](https://central.sonatype.com/artifact/io.github.endid7/soundpack)
